@@ -4,31 +4,18 @@ import com.user.data.core.User;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-import java.util.Map;
 
 public class UserValidation implements ConstraintValidator<UserConstraint, User> {
     private String usernameRegExp;
     private String passwordRegExp;
     private String emailRegExp;
     private String phoneRegExp;
-    private Map<String, String> invalidFieldAndMsg;
 
-    public final String USERNAME = "username";
-    public final String PASSWORD = "password";
-    public final String EMAIL = "email";
-    public final String PHONE = "phone";
+    public static final String USERNAME = "username";
+    public static final String PASSWORD = "password";
+    public static final String EMAIL = "email";
+    public static final String PHONE = "phone";
 
-    public UserValidation(String usernameRegExp, String passwordRegExp, String emailRegExp, String phoneRegExp, Map<String, String> invalidFieldAndMsg) {
-        this.usernameRegExp = usernameRegExp;
-        this.passwordRegExp = passwordRegExp;
-        this.emailRegExp = emailRegExp;
-        this.phoneRegExp = phoneRegExp;
-        this.invalidFieldAndMsg = invalidFieldAndMsg;
-    }
-
-    public UserValidation() {
-//        invalidFieldAndMsg = new HashMap<>();
-    }
 
     @Override
     public void initialize(UserConstraint constraintAnnotation) {
@@ -40,61 +27,70 @@ public class UserValidation implements ConstraintValidator<UserConstraint, User>
 
     @Override
     public boolean isValid(User user, ConstraintValidatorContext constraintValidatorContext) {
+        int validCount = 0;
+
         if (user == null) return true;
-        usernameValidate(user);
-        passwordValidate(user);
-        emailValidate(user);
-        phoneValidate(user);
-        saveConstraintViolation(constraintValidatorContext);
+        if (usernameValidate(user, constraintValidatorContext)) validCount++;
+        if (passwordValidate(user, constraintValidatorContext)) validCount++;
+        if (emailValidate(user, constraintValidatorContext)) validCount++;
+        if (phoneValidate(user, constraintValidatorContext)) validCount++;
 
-        return invalidFieldAndMsg.size() == 0;
+        return validCount == 4;
     }
 
-    private void saveConstraintViolation(ConstraintValidatorContext constraintValidatorContext) {
-        for (String field : invalidFieldAndMsg.keySet()) {
-            constraintValidatorContext.buildConstraintViolationWithTemplate(invalidFieldAndMsg.get(field))
-                    .addPropertyNode(field)
-                    .addConstraintViolation();
-        }
+    private void saveConstraintViolation(String field, String msg, ConstraintValidatorContext constraintValidatorContext) {
+        constraintValidatorContext.disableDefaultConstraintViolation();
+        constraintValidatorContext.buildConstraintViolationWithTemplate(msg)
+                .addPropertyNode(field)
+                .addConstraintViolation();
+
     }
 
-    private void phoneValidate(User user) {
+    private boolean phoneValidate(User user, ConstraintValidatorContext constraintValidatorContext) {
         if (user.getPhone() == null) {
-            invalidFieldAndMsg.put(PHONE, "{validation.user.message.empty}");
-            return;
+            saveConstraintViolation(PHONE, "{validation.user.message.empty}", constraintValidatorContext);
+            return false;
         }
         if (!user.getPhone().matches(phoneRegExp)) {
-            invalidFieldAndMsg.put(PHONE, "{validation.user.message.phone.invalid}");
+            saveConstraintViolation(PHONE, "{validation.user.message.phone.invalid}", constraintValidatorContext);
+            return false;
         }
+        return true;
     }
 
-    private void emailValidate(User user) {
+    private boolean emailValidate(User user, ConstraintValidatorContext constraintValidatorContext) {
         if (user.getEmail() == null) {
-            invalidFieldAndMsg.put(EMAIL, "{validation.user.message.empty}");
-            return;
+            saveConstraintViolation(EMAIL, "{validation.user.message.empty}", constraintValidatorContext);
+            return false;
         }
         if (!user.getEmail().matches(emailRegExp)) {
-            invalidFieldAndMsg.put(EMAIL, "{validation.user.message.email.invalid}");
+            saveConstraintViolation(EMAIL, "{validation.user.message.email.invalid}", constraintValidatorContext);
+            return false;
         }
+        return true;
     }
 
-    private void passwordValidate(User user) {
+    private boolean passwordValidate(User user, ConstraintValidatorContext constraintValidatorContext) {
         if (user.getPassword() == null) {
-            invalidFieldAndMsg.put(PASSWORD, "{validation.user.message.empty}");
-            return;
+            saveConstraintViolation(PASSWORD, "{validation.user.message.empty}", constraintValidatorContext);
+            return false;
         }
         if (!user.getPassword().matches(passwordRegExp)) {
-            invalidFieldAndMsg.put(PASSWORD, "{validation.user.message.password.invalid}");
+            saveConstraintViolation(PASSWORD, "{validation.user.message.password.invalid}", constraintValidatorContext);
+            return false;
         }
+        return true;
     }
 
-    private void usernameValidate(User user) {
+    private boolean usernameValidate(User user, ConstraintValidatorContext constraintValidatorContext) {
         if (user.getUsername() == null) {
-            invalidFieldAndMsg.put(USERNAME, "{validation.user.message.empty}");
-            return;
+            saveConstraintViolation(USERNAME, "{validation.user.message.empty}", constraintValidatorContext);
+            return false;
         }
         if (!user.getUsername().matches(usernameRegExp)) {
-            invalidFieldAndMsg.put(PASSWORD, "{validation.user.message.username.invalid}");
+            saveConstraintViolation(USERNAME, "{validation.user.message.username.invalid}", constraintValidatorContext);
+            return false;
         }
+        return true;
     }
 }

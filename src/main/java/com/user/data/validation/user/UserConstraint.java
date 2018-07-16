@@ -18,19 +18,11 @@ public @interface UserConstraint {
 
     Class<? extends Payload>[] payload() default {};
 
-    String usernameRegExp() default "[A-Za-z]+";
+    String usernameRegExp() default "^[A-Za-z0-9]{3,}$";
 
-    String passwordRegExp() default "[A-Za-z]+";
+    String passwordRegExp() default "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[#&%!])(?=\\S+$).{8,}$";
 
-    String emailRegExp() default "[A-Za-z]+";
+    String emailRegExp() default "^(?=.*[@])(?=\\S+$).{5,}$";
 
-    String phoneRegExp() default "[A-Za-z]+";
-
-//    String usernameRegExp() default "^.{3,}$";
-//
-//    String passwordRegExp() default "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[#&%!])(?=\\S+$).{8,}$";
-//
-//    String emailRegExp() default "^(?=.*[@])(?=\\S+$).{5,}$";
-//
-//    String phoneRegExp() default "^[+]?[0-9](?=\\S+$).{5,}";
+    String phoneRegExp() default "^[+]?[0-9](?=\\S+$).{5,}";
 }

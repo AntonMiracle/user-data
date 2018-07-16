@@ -38,16 +38,16 @@
         </dependency>
 
         <!--VALIDATION-->
-        <!--<dependency>-->
-            <!--<groupId>org.hibernate.validator</groupId>-->
-            <!--<artifactId>hibernate-validator</artifactId>-->
-            <!--<version>6.0.10.Final</version>-->
-        <!--</dependency>-->
-        <!--<dependency> &lt;!&ndash;dependencies for hibernate validation&ndash;&gt;-->
-            <!--<groupId>org.glassfish</groupId>-->
-            <!--<artifactId>javax.el</artifactId>-->
-            <!--<version>3.0.1-b09</version>-->
-        <!--</dependency>-->
+        <dependency>
+            <groupId>org.hibernate.validator</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>6.0.10.Final</version>
+        </dependency>
+        <dependency> <!--dependencies for hibernate validation-->
+            <groupId>org.glassfish</groupId>
+            <artifactId>javax.el</artifactId>
+            <version>3.0.1-b09</version>
+        </dependency>
         <!--JAVA EE-->
         <dependency>
             <groupId>javax</groupId>

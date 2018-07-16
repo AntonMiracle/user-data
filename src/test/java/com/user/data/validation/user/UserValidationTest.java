@@ -4,61 +4,78 @@ import com.user.data.core.User;
 import org.junit.Before;
 import org.junit.Test;
 
-import javax.validation.ConstraintValidatorContext;
-
-import java.util.HashMap;
-import java.util.Map;
+import javax.validation.Validation;
+import javax.validation.Validator;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class UserValidationTest {
     private User user;
-    private Map<String, String> invalidFieldAndMsg;
-    private UserValidation validation;
-    private ConstraintValidatorContext constraintValidatorContext;
+    private Validator validator;
 
     @Before
     public void before() {
         user = new User();
-        invalidFieldAndMsg = new HashMap<>();
-        validation = new UserValidation("[A-Za-z]+","[A-Za-z]+","[A-Za-z@]+","[0-9]+",invalidFieldAndMsg);
-
-        constraintValidatorContext = mock(ConstraintValidatorContext.class);
-        ConstraintValidatorContext.ConstraintViolationBuilder builder = mock(ConstraintValidatorContext.ConstraintViolationBuilder.class);
-        ConstraintValidatorContext.ConstraintViolationBuilder.NodeBuilderCustomizableContext nodeBuilder = mock(ConstraintValidatorContext.ConstraintViolationBuilder.NodeBuilderCustomizableContext.class);
-
-        when(constraintValidatorContext.buildConstraintViolationWithTemplate(any(String.class))).thenReturn(builder);
-        when(builder.addPropertyNode(any(String.class))).thenReturn(nodeBuilder);
-        when(nodeBuilder.addConstraintViolation()).thenReturn(constraintValidatorContext);
-
+        validator = Validation.buildDefaultValidatorFactory().getValidator();
     }
 
     @Test(expected = Test.None.class)
     public void fieldNameIsCorrect() throws NoSuchFieldException {
-        user.getClass().getDeclaredField(validation.USERNAME);
-        user.getClass().getDeclaredField(validation.PASSWORD);
-        user.getClass().getDeclaredField(validation.EMAIL);
-        user.getClass().getDeclaredField(validation.PHONE);
+        user.getClass().getDeclaredField(UserValidation.USERNAME);
+        user.getClass().getDeclaredField(UserValidation.PASSWORD);
+        user.getClass().getDeclaredField(UserValidation.EMAIL);
+        user.getClass().getDeclaredField(UserValidation.PHONE);
 
-        assertThat(User.class.getDeclaredFields()).isEqualTo(4);
+        assertThat(User.class.getDeclaredFields().length).isEqualTo(4);
+    }
+
+    private User getValidUser() {
+        User user = new User();
+        user.setUsername("username");
+        user.setPassword("P#assword8");
+        user.setEmail("email@gmail.com");
+        user.setPhone("34234235");
+        return user;
     }
 
     @Test
-    public void isValidReturnTrue() {
-        user.setUsername("username");
+    public void userMustBeValid() {
+        user = getValidUser();
+        assertThat(validator.validate(user).size() == 0).isTrue();
+    }
+
+    @Test
+    public void usernameMustBeInvalid() {
+        user = getValidUser();
+        user.setUsername("user_name$");
+        assertThat(validator.validate(user).size() == 1).isTrue();
+    }
+
+    @Test
+    public void passwordMustBeInvalid() {
+        user = getValidUser();
         user.setPassword("password");
-        user.setEmail("email@gmail.com");
-        user.setPhone("34234235");
+        assertThat(validator.validate(user).size() == 1).isTrue();
+    }
 
-        System.out.println(invalidFieldAndMsg.size()==0);
-        for(String key : invalidFieldAndMsg.keySet()){
-            System.out.println(key + " : " + invalidFieldAndMsg.get(key) + System.lineSeparator());
-        }
+    @Test
+    public void emailMustBeInvalid() {
+        user = getValidUser();
+        user.setEmail("email");
+        assertThat(validator.validate(user).size() == 1).isTrue();
+    }
 
-        assertThat(validation.isValid(user, constraintValidatorContext)).isTrue();
+    @Test
+    public void phoneMustBeInvalid() {
+        user = getValidUser();
+        user.setPhone("+++45234");
+        assertThat(validator.validate(user).size() == 1).isTrue();
+    }
 
+    @Test
+    public void phoneMustBeValid() {
+        user = getValidUser();
+        user.setPhone("+452334224");
+        assertThat(validator.validate(user).size() == 0).isTrue();
     }
 }
