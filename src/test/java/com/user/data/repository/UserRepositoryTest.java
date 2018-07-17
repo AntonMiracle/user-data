@@ -11,8 +11,8 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 public class UserRepositoryTest {
     private UserRepository repository;
-    private String username1 = "u1";
-    private String username2 = "u2";
+    private String username1 = "u11";
+    private String username2 = "u22";
 
     @Before
     public void before() {
