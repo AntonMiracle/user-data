@@ -26,7 +26,7 @@ public class UserValidationTest {
         user.getClass().getDeclaredField(UserValidation.EMAIL);
         user.getClass().getDeclaredField(UserValidation.PHONE);
 
-        assertThat(User.class.getDeclaredFields().length).isEqualTo(4);
+        assertThat(User.class.getDeclaredFields().length).isEqualTo(5);
     }
 
     private User getValidUser() {
