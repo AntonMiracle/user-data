@@ -71,4 +71,10 @@ public class UserTest {
 
         assertThat(isContains).isTrue();
     }
+
+    @Test
+    public void setAndGetId() {
+        user.setId(1L);
+        assertThat(user.getId()).isEqualTo(1L);
+    }
 }

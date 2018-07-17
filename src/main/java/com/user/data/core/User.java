@@ -2,11 +2,22 @@ package com.user.data.core;
 
 import com.user.data.validation.user.UserConstraint;
 
+import javax.persistence.*;
+
 @UserConstraint
+@Entity
+@Table(name = "USERS")
 public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    private long id;
+    @Column(name = "USERNAME", nullable = false)
     private String username;
+    @Column(name = "PASSWORD", nullable = false)
     private String password;
+    @Column(name = "EMAIL")
     private String email;
+    @Column(name = "PHONE")
     private String phone;
 
     public void setUsername(String username) {
@@ -48,6 +59,7 @@ public class User {
 
         User user = (User) o;
 
+        if (id != user.id) return false;
         if (username != null ? !username.equals(user.username) : user.username != null) return false;
         if (password != null ? !password.equals(user.password) : user.password != null) return false;
         if (email != null ? !email.equals(user.email) : user.email != null) return false;
@@ -60,6 +72,7 @@ public class User {
         result = 31 * result + (password != null ? password.hashCode() : 0);
         result = 31 * result + (email != null ? email.hashCode() : 0);
         result = 31 * result + (phone != null ? phone.hashCode() : 0);
+        result = 31 * result + (int) (id ^ (id >>> 32));
         return result;
     }
 
@@ -70,6 +83,15 @@ public class User {
                 ", password='" + password + '\'' +
                 ", email='" + email + '\'' +
                 ", phone='" + phone + '\'' +
+                ", id=" + id +
                 '}';
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public long getId() {
+        return id;
     }
 }

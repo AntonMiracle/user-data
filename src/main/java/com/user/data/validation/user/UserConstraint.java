@@ -18,7 +18,7 @@ public @interface UserConstraint {
 
     Class<? extends Payload>[] payload() default {};
 
-    String usernameRegExp() default "^[A-Za-z0-9]{3,}$";
+    String usernameRegExp() default "^[A-Za-z0-9]{2,}$";
 
     String passwordRegExp() default "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[#&%!])(?=\\S+$).{8,}$";
 
