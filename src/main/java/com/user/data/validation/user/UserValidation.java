@@ -47,9 +47,9 @@ public class UserValidation implements ConstraintValidator<UserConstraint, User>
     }
 
     private boolean phoneValidate(User user, ConstraintValidatorContext constraintValidatorContext) {
-        if (user.getPhone() == null) {
-            saveConstraintViolation(PHONE, "{validation.user.message.empty}", constraintValidatorContext);
-            return false;
+        if (user.getPhone() == null || user.getPhone().trim().length() == 0) {
+            user.setPhone("");
+            return true;
         }
         if (!user.getPhone().matches(phoneRegExp)) {
             saveConstraintViolation(PHONE, "{validation.user.message.phone.invalid}", constraintValidatorContext);
@@ -59,9 +59,9 @@ public class UserValidation implements ConstraintValidator<UserConstraint, User>
     }
 
     private boolean emailValidate(User user, ConstraintValidatorContext constraintValidatorContext) {
-        if (user.getEmail() == null) {
-            saveConstraintViolation(EMAIL, "{validation.user.message.empty}", constraintValidatorContext);
-            return false;
+        if (user.getEmail() == null || user.getEmail().trim().length() == 0) {
+            user.setEmail("");
+            return true;
         }
         if (!user.getEmail().matches(emailRegExp)) {
             saveConstraintViolation(EMAIL, "{validation.user.message.email.invalid}", constraintValidatorContext);
